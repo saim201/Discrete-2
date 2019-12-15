@@ -1,37 +1,33 @@
 #include<iostream> 
 #include <string.h>      
 
-
-using namespace :: std;    
-
+using namespace  std;    
 
 struct node
 {   
-    	char puzz[10];   
-    	char road[100];   
+    char moves[10];   
+   	char edge[100];   
 };  
 	 
-node Start,finalstate,open[500000];       
+node first,last,open[500000];       
 	bool closed[500000]={0}; 
   
- 
-
 
  
 
-class Puzzle {
+class Puzzle{
 
-	private:
+private:
 
 	int head,tail;  
 	long Counter;   
-	int len;
-
-	public:
+	int length;
+	
+public:
 	
 	Puzzle()
 	{	
-		len= 100000;
+		length= 100000;
 		Counter=1;
 		head=0;
 		tail=1;  
@@ -42,18 +38,18 @@ class Puzzle {
     int i;   
     
 	for(i=0;i<10;i++)   
-        if(u.puzz[i]=='0')   
+        if(u.moves[i]=='0')   
         {   
             *r=i/3;*c=i%3;   
             break;   
         }   
 }
  
-node takeof()    
+node notpossible()    
 {   
     node t;   
     t=open[head++];   
-    head=head%len;
+    head=head%length;
     return t;   
 } 
 
@@ -62,45 +58,60 @@ int Possiblesteps(node *u,int r,int c,int i,int num)
     char s;   
     switch(i)   
     {   
-    case 0: r--;    
+    case 0: 
+		{
+			r--;    
             if(r>=0)   
             {   
-                s=u->puzz[(r+1)*3+c];   
-                u->puzz[(r+1)*3+c]=u->puzz[r*3+c];   
-                u->puzz[r*3+c]=s;   
-                u->road[num]=48+i;    
+                s=u->moves[(r+1)*3+c];   
+                u->moves[(r+1)*3+c]=u->moves[r*3+c];   
+                u->moves[r*3+c]=s;   
+                u->edge[num]=48+i;    
                 return 1;   
-            }   
-            break;   
-    case 1: c--;     
+            }
+			break; 
+		}
+			 
+    case 1: 
+		{
+		  c--;     
           if(c>=0)   
           {   
-              s=u->puzz[3*r+c+1];   
-              u->puzz[3*r+c+1]=u->puzz[3*r+c];   
-              u->puzz[3*r+c]=s;   
-              u->road[num]=48+i;     
+              s=u->moves[3*r+c+1];   
+              u->moves[3*r+c+1]=u->moves[3*r+c];   
+              u->moves[3*r+c]=s;   
+              u->edge[num]=48+i;     
               return 1;   
           }   
-          break;   
-    case 2: r++;    
+          break; 
+		}
+		
+    case 2:
+		{
+			r++;    
             if(r<=2)   
             {   
-                s=u->puzz[(r-1)*3+c];   
-                u->puzz[(r-1)*3+c]=u->puzz[r*3+c];   
-                u->puzz[r*3+c]=s;   
-                u->road[num]=48+i;  
+                s=u->moves[(r-1)*3+c];   
+                u->moves[(r-1)*3+c]=u->moves[r*3+c];   
+                u->moves[r*3+c]=s;   
+                u->edge[num]=48+i;  
                 return 1;   
             }   
-            break;   
-    case 3: c++;       
-          if(c<=2)   
-          {   
-              s=u->puzz[3*r+c-1];   
-              u->puzz[3*r+c-1]=u->puzz[3*r+c];   
-              u->puzz[3*r+c]=s;   
-              u->road[num]=48+i;     
-              return 1;   
-          }   
+            break;
+		}
+			  
+    case 3: 
+		{
+		  	c++;       
+          	if(c<=2)   
+          	{   
+              	s=u->moves[3*r+c-1];   
+              	u->moves[3*r+c-1]=u->moves[3*r+c];   
+              	u->moves[3*r+c]=s;   
+              	u->edge[num]=48+i;     
+             	return 1;   
+          	} 
+		}
     }   
     return 0;   
 }   
@@ -109,8 +120,9 @@ int empty(void)
 {   
     if(head==tail)   
     {   
-    exit(0);   
-    }   
+    return(0);   
+    } 
+	  
         return 0;   
 }   
   
@@ -119,36 +131,52 @@ void step(node *u,int r,int c,char ch)
     char s;   
     switch(ch)   
     {   
-    case '0':  r--;    
+    case '0':  
+		{
+			r--;    
             if(r>=0)   
             {   
-                s=u->puzz[(r+1)*3+c];   
-                u->puzz[(r+1)*3+c]=u->puzz[r*3+c];   
-                u->puzz[r*3+c]=s;}   
-                break;   
-    case '1': c--;   
-          if(c>=0)   
-          {   
-              s=u->puzz[3*r+c+1];   
-              u->puzz[3*r+c+1]=u->puzz[3*r+c];   
-              u->puzz[3*r+c]=s;}   
-              break;   
+                s=u->moves[(r+1)*3+c];   
+                u->moves[(r+1)*3+c]=u->moves[r*3+c];   
+                u->moves[r*3+c]=s;}   
+                break; 
+		}
+				  
+    case '1': 
+		{
+		  	c--;   
+          	if(c>=0)   
+          	{   
+             	s=u->moves[3*r+c+1];   
+              	u->moves[3*r+c+1]=u->moves[3*r+c];   
+              	u->moves[3*r+c]=s;
+			}   
+              	break;
+		}
              
-    case '2': r++;     
+    case '2': 
+		{
+			r++;     
             if(r<=2)   
             {   
-                s=u->puzz[(r-1)*3+c];   
-                u->puzz[(r-1)*3+c]=u->puzz[r*3+c];   
-                u->puzz[r*3+c]=s;         
+                s=u->moves[(r-1)*3+c];   
+                u->moves[(r-1)*3+c]=u->moves[r*3+c];   
+                u->moves[r*3+c]=s;         
             }   
-            break;   
-    case '3': c++;   
-          if(c<=2)   
-          {   
-              s=u->puzz[3*r+c-1];   
-              u->puzz[3*r+c-1]=u->puzz[3*r+c];   
-              u->puzz[3*r+c]=s;   
-          }   
+            break;
+		}		
+			   
+    case '3': 
+		{
+			c++;   
+          	if(c<=2)   
+          	{   
+              	s=u->moves[3*r+c-1];   
+              	u->moves[3*r+c-1]=u->moves[3*r+c];   
+              	u->moves[3*r+c]=s;   
+          	}
+		}		
+			     
     }   
 }   
 
@@ -161,7 +189,7 @@ int factor(int n)
 }     
   
   
-int sortit(char Start[],int a)  
+int sort(char first[],int a)  
 {   
     int i,j,sum,overall=0;   
     for(j=0;j<=a-2;j++)   
@@ -169,7 +197,7 @@ int sortit(char Start[],int a)
         sum=0;   
         for(i=j+1;i<=a-1;i++)   
         {   
-            if(Start[j]>Start[i])   
+            if(first[j]>first[i])   
                 sum++;   
         }   
         sum=sum*factor(a-1-j);   
@@ -177,112 +205,56 @@ int sortit(char Start[],int a)
     }   
     return overall;   
 }     
-    
-
-void Initialize()  
-{   
-    int i;   
-    int tStartart[9]={0},tfinish[9]={0};   
-    long u;  
-	
-	cin >> Start.puzz; 
-	
-	 
-	  
-    getchar();   
-    for(i=0;i<=8;i++)   
-    {   
-        if(Start.puzz[i]>'8'||Start.puzz[i]<'0')   
-        {   
-            exit(0);   
-        }   
-        tStartart[Start.puzz[i]-'0']=1;   
-    }   
-   for(i=0;i<9;i++)   
-    {   
-        if(tStartart[i]==0)   
-        {   
-           
-            exit(0);   
-        }   
-    }   
-
-	cout << "Enter the finalstateinal State:	" ;    
-	cin >> finalstate.puzz;   
-       
-    for(i=0;i<=8;i++)   
-    {   
-        if(finalstate.puzz[i]>'8'||finalstate.puzz[i]<'0')   
-        {      
-            exit(0);   
-        }   
-    }   
-    for(i=0;i<9;i++)   
-    {   
-        if(tStartart[i]==0)   
-        {   
-            exit(0);   
-        }   
-    }   
-    for(i=0;i<100;i++){   
-    finalstate.road[i]='\0';   
-    Start.road[i]='\0';   
-    }   
-    open[0]=Start;   
-    u=sortit(Start.puzz,9);   
-    closed[u]=1;     
-} 
 
 
 void pop(node m)       
 {   
     Counter++;   
-    closed[sortit(m.puzz,9)]=1;   
+    closed[sort(m.moves,9)]=1;   
 } 
 
- int isaim(node m)     
+ int comparison(node m)     
 {   
-    if(!strcmp(m.puzz,finalstate.puzz))   
+    if(!strcmp(m.moves,last.moves))   
         return 1;   
     return 0;   
 }   
 int used(node m)     
 {   
-    if(closed[sortit(m.puzz,9)]==1)      
-         return 1;   
+    if(closed[sort(m.moves,9)]==1)      
+         return 1; 
+		   
      return 0;   
 } 
    
- 
 void push(node m)      
 {   
-    if((tail+1)%len==head)   
+    if((tail+1)%length==head)   
     {   
        
         exit(0);   
     }   
     open[tail++]=m;   
-    tail%=len;   
+    tail%=length;   
 }   
   
 
-
-node seach(int *t)    
+node search(int *t)    
 {   
     node m[4];   
     int r,c,i,num=0;   
     
 	while(!empty())   
     {   
-        m[0]=m[1]=m[2]=m[3]=takeof();  
-        num=strlen(m[0].road); 
+        m[0]=m[1]=m[2]=m[3]=notpossible();  
+        num=strlen(m[0].edge); 
         *t=num+1;      
         count(&r,&c,m[0]);  
      for(i=0;i<4;i++)        
         {   
             if(Possiblesteps(&m[i],r,c,i,num))    
             {   
-                if(isaim(m[i]))      
+                if(comparison(m[i]))      
                     return m[i];   
                 if(!used(m[i]))      
                 {   push(m[i]);    
@@ -293,63 +265,100 @@ node seach(int *t)
     }   
     return m[0];   
 } 
- 
 
-
-void print(node m,int t)   
+void display(node m,int t)   
 {   
     int i,j,c,r;   
-    cout << "step: " <<endl ; 
     for(i=1;i<=9;i++)   
     {   
-        cout << Start.puzz[i-1]<<"	";   
-        if(i%3==0) cout << endl; 
+        cout << first.moves[i-1]<<"  ";   
+        if(i%3==0) 
+			cout << endl; 
     }   
        cout << endl;
 	      
     for(i=1;i<=t;i++)   
-    {   
-    	
-           
-        cout << "step Number: " << i<< endl;
-		
-		count(&r,&c,Start);   
-        step(&Start,r,c,m.road[i-1]);    
+    {   		
+		count(&r,&c,first);   
+        step(&first,r,c,m.edge[i-1]);    
         for(j=1;j<=9;j++)   
-        {   
-        	
-        	
-          cout <<Start.puzz[j-1] << "	";  
-                if(j%3==0) 
+        {   	
+          cout <<first.moves[j-1] << "  ";  
+            if(j%3==0) 
 				cout <<endl;  
         }   
            	cout << endl;
 		       
     }   
-}   
-
-
-
-	
+}  
 	
 };
 
 
 int main()   
 {   
-    Puzzle temp;
+    Puzzle puzz;
 	node step;   
-    int test;   
+    int counts;   
     
     cout << "Input elements like: 123587640" <<endl; 
-   
-    temp.Initialize();   
-       
-    step=temp.seach(&test);  
-    temp.print(step,test);  
+    int i;   
+    int start[9]={0},end[9]={0};   
+    long u;  
+	cout<<"Enter your Input : ";
+	cin >> first.moves; 
+	
+    getchar();   
+    for(i=0;i<=8;i++)   
+    {   
+        if(first.moves[i]>'8' || first.moves[i]<'0')   
+        {   
+            return (0);   
+        }   
+        start[first.moves[i]-'0']=1;   
+    }   
+   for(i=0;i<9;i++)   
+    {   
+        if(start[i]==0)   
+        {   
+           
+            return(0);   
+        }   
+    }   
+	char temp007[10]="012345678";
+	     
+    for(i=0;i<=8;i++)   
+    {
+	last.moves[i]=temp007[i];
+	 
+	}
+
+	for(i=0;i<=8;i++)   
+    {   
+        if(last.moves[i]>'8' || last.moves[i]<'0')   
+        {      
+            return(0);   
+        }   
+    }   
+    for(i=0;i<9;i++)   
+    {   
+        if(start[i]==0)   
+        {   
+            return(0);   
+        }   
+    }   
+    for(i=0;i<100;i++){   
+    last.edge[i]='\0';   
+    first.edge[i]='\0';   
+    }   
+    open[0]=first;   
+    u=puzz.sort(first.moves,9);   
+    closed[u]=1;   
+	
+	   
+    step=puzz.search(&counts);  
+    puzz.display(step,counts);  
 	  
-	cout << "overall steps: " << test <<endl; 
+	cout << endl << "Total steps: " << counts <<endl; 
 	
 }  
-
-
